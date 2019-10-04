@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Container } from '@material-ui/core';
 import {Title} from 'rbx';
@@ -15,6 +16,8 @@ import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import Typography from '@material-ui/core/Typography';
 import Fab from '@material-ui/core/Fab';
+import TemporaryDrawer from './Cart'
+import { object } from 'prop-types';
 
 const sizes = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
@@ -44,16 +47,27 @@ const useStyles = makeStyles(() =>
   }),
 );
 
-const useSelection = (list) =>
+const useSelectio = (list) =>
 {
   const [selected, setSelected] = useState(list);
   const toggle = (x) =>
     {setSelected(selected.includes(x) ? selected.filter(y=>y !== x) : [x].concat(selected))};
   return [selected, toggle];
 };
+const useSelection = () =>
+{
+
+  const [selected, setSelected] = useState({"Skuul": 20});
+  const toggle = (name) =>
+    {   var tmpdict = {}; 
+        if (Object.keys(selected).includes(name)){tmpdict[name] = selected[name]+1;}
+        else {tmpdict[name] = 1;}
+        setSelected(Object.keys(selected).includes(name) ? Object.assign(selected, tmpdict) : Object.assign(tmpdict, selected ))};
+  return [selected, toggle];
+};
 
 
-const ProductTable = ({products}) => {
+const ProductTable = ({products, state}) => {
   
   const classes = useStyles();
   return (
@@ -73,7 +87,10 @@ const ProductTable = ({products}) => {
             </CardContent>
           </CardActionArea>
           <CardActions>
-            <Button size="small" color="primary" align="center">
+            <Button size="small" color="primary" align="center" onClick={()=>{
+                state.cartToggles(product.title);
+                //TemporaryDrawer.
+            }}>
               Add to Cart
             </Button>
           </CardActions>
@@ -102,17 +119,22 @@ const ColorSelected = ({state}) => {
 }
 
 export const FilterableProductTable = ({products}) => {  
-    const [sizeSelect, sizeToggles] = useSelection(sizes);
+    const [sizeSelect, sizeToggles] = useSelectio(sizes);
     const productsSelected = products.filter(product => sizeSelect.includes(product.size));
+    const [cartDict, cartToggles] = useSelection();
   return (
     <React.Fragment>
     <div style={{display:'inline-block'}}>
       <ColorSelected state={{sizeSelect, sizeToggles}} />
     </div>
-    &nbsp;
     <div style={{display:'inline-block'}}>
-      <ProductTable products = {productsSelected}/> 
+        <TemporaryDrawer cartDict = {cartDict}/>
     </div>
+    {/* <div style={{display:'inline-block'}}>
+      <ProductTable products = {productsSelected}/> 
+    </div> */}
+    <ProductTable products = {productsSelected} state={{cartDict, cartToggles}}/>
+    
     </React.Fragment>
          //filterText={this.state.filterText}
          // inStockOnly={this.state.inStockOnly}
