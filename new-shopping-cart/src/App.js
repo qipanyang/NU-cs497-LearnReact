@@ -37,7 +37,16 @@ HideOnScroll.propTypes = {
   window: PropTypes.func,
 };
 const App = (props) => {
-
+  const [data, setData] = useState({});
+  const products = Object.values(data);
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const response = await fetch('./data/products.json');
+      const json = await response.json();
+      setData(json);
+    };
+    fetchProducts();
+  }, []);
   return (
     <React.Fragment>
       <CssBaseline />
@@ -49,18 +58,13 @@ const App = (props) => {
         </AppBar>
       </HideOnScroll>
       <Toolbar />
-      {/* <Container> */}
-        {/* <Box my={2}>
-          {[...new Array(12)]
-            .map(
-              () => `Cras mattis consectetur purus sit amet fermentum.
-Cras justo odio, dapibus ac facilisis in, egestas eget quam.
-Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-Praesent commodo cursus magna, vel scelerisque nisl consectetur et.`,
-            )
-            .join('\n')}
+      <Container> 
+         <Box my={5}>
+         <ul>
+          {products.map(product => <li key={product.sku}><font size="5" color="blue">{product.title}</font></li>)}
+        </ul>
         </Box>
-      </Container> */}
+      </Container>
     </React.Fragment>
   );
 };
