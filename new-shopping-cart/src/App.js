@@ -11,6 +11,7 @@ import Box from '@material-ui/core/Box';
 import Slide from '@material-ui/core/Slide';
 import PropTypes from 'prop-types';
 
+import {ProductTable} from './ProductTable';
 
 
 
@@ -59,11 +60,12 @@ const App = (props) => {
       </HideOnScroll>
       <Toolbar />
       <Container> 
-         <Box my={5}>
+         {/* <Box my={5}>
          <ul>
           {products.map(product => <li key={product.sku}><font size="5" color="blue">{product.title}</font></li>)}
         </ul>
-        </Box>
+        </Box> */}
+        <ProductTable products = {products}/>
       </Container>
     </React.Fragment>
   );
