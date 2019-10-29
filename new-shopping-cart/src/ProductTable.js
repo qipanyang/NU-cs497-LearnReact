@@ -40,19 +40,19 @@ const SizeSelector = () => {
 const GridCardStyles = makeStyles(theme => ({
     root: {
         display: 'flex',
-        flexWrap: 'wrap',
+        // flexWrap: 'wrap',
         justifyContent: 'space-around',
-        overflow: 'hidden',
-        //backgroundColor: theme.palette.background.paper,
+        // overflow: 'hidden',
       },
     grid: {
-    //   marginLeft: 250,
+      marginLeft: 0,
       marginTop: 75,
-      paddingLeft: 90,
+      marginRight:10
+    //   paddingLeft: -10,
     },
     card:{
       display:"flex",
-      justifyContent: 'center',
+    //   justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'column',
       width: 350,
@@ -71,10 +71,10 @@ export const ProductTable = ({products}) =>{
     const classes = GridCardStyles()
     return(
         <div className={classes.root}>
-        <Grid container={true} spacing={4} className={classes.grid} xl={2}>       
+        <Grid container={true} spacing={4} className={classes.grid} direction="row" justify="space-between" alignItems="center">       
         {products.map(product =>
           (<Grid item >
-            <Card className={classes.card}>
+            <Card className={classes.card} style={{width: 300}}>
             <CardActionArea>
             <CardContent>
               <Typography align="center">
