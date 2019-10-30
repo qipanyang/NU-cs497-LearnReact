@@ -148,6 +148,40 @@ const MenuProps = {
   },
 };
 
+const useDictSelection = () =>
+{
+  const removeByKey = (myObj, deleteKey) => {
+    return Object.keys(myObj)
+      .filter(key => key !== deleteKey)
+      .reduce((result, current) => {
+        result[current] = myObj[current];
+        return result;
+    }, {});
+  };
+  const addone = (myObj, key) => {
+    return Object.keys(myObj)
+    .reduce((result, current) => {
+      current === key ? result[current] = myObj[current] + 1 : result[current] = myObj[current];
+      return result;
+    }, {});
+  };
+
+  const reduceone = (myObj, key) => {
+    return Object.keys(myObj)
+    .reduce((result, current) => {
+      current === key ? result[current] = myObj[current] - 1 : result[current] = myObj[current];
+      return result;
+    }, {});
+  };
+  
+  const [selected, setSelected] = useState({});
+  const toggleadd = (name) => {
+        setSelected(Object.keys(selected).includes(name) ? addone(selected, name) : Object.assign({[name]: 1}, selected ))};
+  const toggledelete = (name) => {
+      setSelected(selected[name]>1 ? reduceone(selected, name) : removeByKey(selected, name))
+  };
+  return [selected, toggleadd, toggledelete];
+};
 
 
 const App = (props) => {
@@ -177,11 +211,11 @@ const App = (props) => {
     return result
   }, {})
 
-  const [cartDict, setCart] = React.useState({"Skuul-M": 3});
+  const [cartDict, cartTogglesadd, cartTogglesdelete] = useDictSelection();
   const total_price = Object.keys(cartDict).reduce((result, product)=>{
-    const tmp = product.split("-")
+    const tmp = product.split("_")
     return result+cartDict[product]*productsPrice[tmp[0]]
-  },0)
+  },0).toFixed(2)
 // console.log(Object.keys(productsPrice).includes(Object.keys(cartDict)[0]))
 // console.log(Object.keys(cartDict)[0])
 // console.log(Object.keys(productsPrice))
@@ -221,7 +255,7 @@ const App = (props) => {
             <ChevronRightIcon/>
           </IconButton>
           </div>
-          <CartList cartState={{cartDict, setCart}} productsPrice = {productsPrice}/>
+          <CartList cartState={{cartDict, cartTogglesadd, cartTogglesdelete}} productsPrice = {productsPrice}/>
           {/* <Drawer anchor="bottom" open="true">
             <div>totol price: {total_price}</div>
           </Drawer> */}
@@ -229,7 +263,7 @@ const App = (props) => {
       </Drawer>
 
       <Container> 
-        <ProductTable products = {products}/>
+        <ProductTable products = {products} cartState={{cartDict, cartTogglesadd, cartTogglesdelete}} openState={{open, setOpen}}/>
       </Container>
     </React.Fragment>
     </div>

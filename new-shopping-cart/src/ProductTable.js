@@ -67,7 +67,7 @@ const GridCardStyles = makeStyles(theme => ({
     }
   }));
 
-export const ProductTable = ({products}) =>{
+export const ProductTable = ({products, cartState, openState}) =>{
     const classes = GridCardStyles()
     return(
         <div className={classes.root}>
@@ -96,7 +96,11 @@ export const ProductTable = ({products}) =>{
               <SizeSelector/>
           </CardActions>
           <CardActions>
-            <Fab variant="extended" color="primary" align="center" >
+            <Fab variant="extended" color="primary" align="center" onClick={()=>{
+                cartState.cartTogglesadd(product.title+"_M");
+                openState.setOpen(true)
+            }}
+            >
               Add to Cart
             </Fab>
           </CardActions>
