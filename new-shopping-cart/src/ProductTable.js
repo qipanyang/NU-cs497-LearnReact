@@ -41,7 +41,7 @@ const GridCardStyles = makeStyles(theme => ({
     root: {
         display: 'flex',
         // flexWrap: 'wrap',
-        justifyContent: 'space-around',
+        // justifyContent: 'space-around',
         // overflow: 'hidden',
       },
     grid: {
@@ -71,7 +71,7 @@ export const ProductTable = ({products}) =>{
     const classes = GridCardStyles()
     return(
         <div className={classes.root}>
-        <Grid container={true} spacing={4} className={classes.grid} direction="row" justify="space-between" alignItems="center">       
+        <Grid container={true} spacing={4} className={classes.grid} direction="row" alignItems="center">       
         {products.map(product =>
           (<Grid item >
             <Card className={classes.card} style={{width: 300}}>

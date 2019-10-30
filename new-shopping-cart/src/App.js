@@ -17,6 +17,10 @@ import { makeStyles, useTheme } from '@material-ui/core/styles';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Button from '@material-ui/core/Button';
+import TableFooter from '@material-ui/core/TableFooter';
+import Table from '@material-ui/core/Table';
+
+
 
 
 
@@ -91,9 +95,9 @@ const useStyles = makeStyles(theme => ({
     },
     drawerHeader: {
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'left',
       padding: theme.spacing(0, 1),
-      ...theme.mixins.toolbar,
+      // ...theme.mixins.toolbar,
       justifyContent: 'flex-end',
     },
     content: {
@@ -127,6 +131,10 @@ const useStyles = makeStyles(theme => ({
       noLabel: {
         marginTop: theme.spacing(3),
       },
+      total_price: {
+        marginBottom: 20,
+        align: 'center',
+      },
   }));
 
 const ITEM_HEIGHT = 48;
@@ -140,17 +148,14 @@ const MenuProps = {
   },
 };
 
-const testCart = {
-  "123455-x": 10,
-  "sdfa-xl": 3,
-}
+
 
 const App = (props) => {
   const classes = useStyles();
   const [data, setData] = useState({});
   const products = Object.values(data);
   const [open, setOpen] = React.useState(false);
-  const [cartDict, setCart] = React.useState(testCart);
+  
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -167,6 +172,19 @@ const App = (props) => {
     };
     fetchProducts();
   }, []);
+  const productsPrice = products.reduce((result, product) => {
+    result[product.title] = product.price;
+    return result
+  }, {})
+
+  const [cartDict, setCart] = React.useState({"Skuul-M": 3});
+  const total_price = Object.keys(cartDict).reduce((result, product)=>{
+    const tmp = product.split("-")
+    return result+cartDict[product]*productsPrice[tmp[0]]
+  },0)
+// console.log(Object.keys(productsPrice).includes(Object.keys(cartDict)[0]))
+// console.log(Object.keys(cartDict)[0])
+// console.log(Object.keys(productsPrice))
   return (
     <div className={classes.root}>
     <React.Fragment>
@@ -190,7 +208,6 @@ const App = (props) => {
             </Toolbar> */}
         </AppBar>
       </HideOnScroll>
-
       <Drawer
         className={classes.drawer}
         variant="persistent"
@@ -204,7 +221,11 @@ const App = (props) => {
             <ChevronRightIcon/>
           </IconButton>
           </div>
-          <CartList cartState={{cartDict, setCart}}/>
+          <CartList cartState={{cartDict, setCart}} productsPrice = {productsPrice}/>
+          {/* <Drawer anchor="bottom" open="true">
+            <div>totol price: {total_price}</div>
+          </Drawer> */}
+        <div><Typography align="center" className={classes.total_price}>totol price: {total_price}</Typography></div>
       </Drawer>
 
       <Container> 

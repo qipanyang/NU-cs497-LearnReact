@@ -15,9 +15,9 @@ import {Title} from 'rbx';
 
 
 export const CartList = ({cartState}) => {
+    
     return (
-        <div
-      >
+        <div>
         <Title align="center">
             shopping cart
         </Title>
