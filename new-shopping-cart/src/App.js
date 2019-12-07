@@ -19,9 +19,7 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import Button from '@material-ui/core/Button';
 import TableFooter from '@material-ui/core/TableFooter';
 import Table from '@material-ui/core/Table';
-
-
-
+import { Layout } from 'antd';
 
 
 import {ProductTable} from './ProductTable';
@@ -29,6 +27,7 @@ import {CartList} from './CartList';
 
 
 
+const { Header, Footer, Sider, Content } = Layout;
 
 
 function HideOnScroll(props) {
@@ -89,6 +88,8 @@ const useStyles = makeStyles(theme => ({
     drawer: {
       width: drawerWidth,
       flexShrink: 0,
+      display: 'flex',
+      flexDirection: 'column',
     },
     drawerPaper: {
       width: drawerWidth,
@@ -210,6 +211,7 @@ const App = (props) => {
     result[product.title] = product.price;
     return result
   }, {})
+  console.log(productsPrice)
 
   const [cartDict, cartTogglesadd, cartTogglesdelete] = useDictSelection();
   const total_price = Object.keys(cartDict).reduce((result, product)=>{
@@ -250,6 +252,8 @@ const App = (props) => {
         classes={{
           paper: classes.drawerPaper,
         }}>
+          <Layout>
+            <Content>
           <div className={classes.drawerHeader}>
           <IconButton onClick={handleDrawerClose}>
             <ChevronRightIcon/>
@@ -259,7 +263,11 @@ const App = (props) => {
           {/* <Drawer anchor="bottom" open="true">
             <div>totol price: {total_price}</div>
           </Drawer> */}
-        <div><Typography align="center" className={classes.total_price}>totol price: {total_price}</Typography></div>
+          </Content>
+          <Footer>
+          <div class='footer'><Typography variant="h6" align="center" className={classes.total_price}>totol price: {total_price}</Typography></div>
+          </Footer>
+        </Layout>
       </Drawer>
 
       <Container> 
