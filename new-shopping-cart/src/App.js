@@ -176,8 +176,18 @@ const useDictSelection = () =>
   };
   
   const [selected, setSelected] = useState({});
-  const toggleadd = (name) => {
-        setSelected(Object.keys(selected).includes(name) ? addone(selected, name) : Object.assign({[name]: 1}, selected ))};
+  const toggleadd = (names) => {
+    var tmp = selected;
+    names.map((name)=>{
+      if (Object.keys(tmp).includes(name)){
+        tmp = addone(tmp, name) 
+      }
+      else{
+        tmp = Object.assign({[name]: 1}, tmp )
+      }
+    });
+  setSelected(tmp);
+  };
   const toggledelete = (name) => {
       setSelected(selected[name]>1 ? reduceone(selected, name) : removeByKey(selected, name))
   };
@@ -188,6 +198,7 @@ const useDictSelection = () =>
 const App = (props) => {
   const classes = useStyles();
   const [data, setData] = useState({});
+  const [inventory, setinventory] = useState({});
   const products = Object.values(data);
   const [open, setOpen] = React.useState(false);
   
@@ -205,22 +216,24 @@ const App = (props) => {
       const json = await response.json();
       setData(json);
     };
+    const fetchInventory = async () => {
+      const response = await fetch('./data/inventory.json');
+      const json = await response.json();
+      setinventory(json);
+    }
     fetchProducts();
+    fetchInventory();
   }, []);
   const productsPrice = products.reduce((result, product) => {
     result[product.title] = product.price;
     return result
   }, {})
-  console.log(productsPrice)
 
   const [cartDict, cartTogglesadd, cartTogglesdelete] = useDictSelection();
   const total_price = Object.keys(cartDict).reduce((result, product)=>{
     const tmp = product.split("_")
     return result+cartDict[product]*productsPrice[tmp[0]]
   },0).toFixed(2)
-// console.log(Object.keys(productsPrice).includes(Object.keys(cartDict)[0]))
-// console.log(Object.keys(cartDict)[0])
-// console.log(Object.keys(productsPrice))
   return (
     <div className={classes.root}>
     <React.Fragment>
@@ -259,7 +272,7 @@ const App = (props) => {
             <ChevronRightIcon/>
           </IconButton>
           </div>
-          <CartList cartState={{cartDict, cartTogglesadd, cartTogglesdelete}} productsPrice = {productsPrice}/>
+          <CartList cartState={{cartDict, cartTogglesadd, cartTogglesdelete}} productsPrice = {productsPrice} inventoryState = {{inventory, setinventory}}/>
           {/* <Drawer anchor="bottom" open="true">
             <div>totol price: {total_price}</div>
           </Drawer> */}
@@ -271,7 +284,7 @@ const App = (props) => {
       </Drawer>
 
       <Container> 
-        <ProductTable products = {products} cartState={{cartDict, cartTogglesadd, cartTogglesdelete}} openState={{open, setOpen}}/>
+        <ProductTable products = {products} cartState={{cartDict, cartTogglesadd, cartTogglesdelete}} openState={{open, setOpen}} inventoryState = {{inventory, setinventory}}/>
       </Container>
     </React.Fragment>
     </div>

@@ -32,13 +32,35 @@ const useStyles = makeStyles(theme => ({
     paddingTop: 20,
   },
 }));
-export const CartList = ({cartState, productsPrice}) => {
+export const CartList = ({cartState, productsPrice, inventoryState }) => {
+  console.log(cartState.cartDict);
   const classes = useStyles();
   const getname = (key)=>{
     return key.split("_")[0]
   };
   const getsize = (key)=>{
     return key.split("_")[1]
+  }
+  const getsku = (key)=>{
+    return key.split("_")[2]
+  }
+  const addinventory = (key)=>{
+    var size = getsize(key);
+    var sku = getsku(key);
+    var d = inventoryState.inventory
+    d[sku][size] += 1;
+    inventoryState.setinventory(d);
+  }
+  const removeinventory = (key) => {
+    var size = getsize(key);
+    var sku = getsku(key);
+    var d = inventoryState.inventory
+    d[sku][size] -= 1;
+    inventoryState.setinventory(d);
+  }
+  const hassize = (key) => {
+    if (inventoryState.inventory[getsku(key)][getsize(key)]>0){return false;}
+    return true;
   }
     return (
         <div>
@@ -61,10 +83,10 @@ export const CartList = ({cartState, productsPrice}) => {
             </CardContent>
           </CardActionArea>
           <CardActions>
-          <Fab color="primary" aria-label="add" size='small' onClick={()=>{cartState.cartTogglesdelete(key);}}>
+          <Fab color="primary" aria-label="add" size='small' onClick={()=>{cartState.cartTogglesdelete(key);addinventory(key)}}>
             <ExposureNeg1Icon />
           </Fab>
-          <Fab color="primary" aria-label="add" size='small' onClick={()=>{cartState.cartTogglesadd(key);}}>
+          <Fab color="primary" aria-label="add" size='small' onClick={()=>{cartState.cartTogglesadd([key]);removeinventory(key)}} disabled={hassize(key)}>
             <ExposurePlus1Icon />
           </Fab>
           </CardActions>
