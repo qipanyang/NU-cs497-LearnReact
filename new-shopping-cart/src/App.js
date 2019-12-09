@@ -24,6 +24,7 @@ import { Layout } from 'antd';
 
 import {ProductTable} from './ProductTable';
 import {CartList} from './CartList';
+import {db} from './db';
 
 
 
@@ -216,13 +217,18 @@ const App = (props) => {
       const json = await response.json();
       setData(json);
     };
-    const fetchInventory = async () => {
-      const response = await fetch('./data/inventory.json');
-      const json = await response.json();
-      setinventory(json);
-    }
+    // const fetchInventory = async () => {
+    //   const response = await fetch('./data/inventory.json');
+    //   const json = await response.json();
+    //   setinventory(json);
+    // }
     fetchProducts();
-    fetchInventory();
+    // fetchInventory();
+      const handleData = snap => {
+        if (snap.val()) setinventory(snap.val());
+      }
+      db.on('value', handleData, error => alert(error));
+      return () => { db.off('value', handleData); };
   }, []);
   const productsPrice = products.reduce((result, product) => {
     result[product.title] = product.price;
