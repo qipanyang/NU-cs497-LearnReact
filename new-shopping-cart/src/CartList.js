@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     paddingTop: 20,
   },
 }));
-export const CartList = ({cartState, productsPrice, inventoryState }) => {
+export const CartList = ({cartState, productsPrice, inventoryState, user }) => {
   console.log(cartState.cartDict);
   const classes = useStyles();
   const getname = (key)=>{

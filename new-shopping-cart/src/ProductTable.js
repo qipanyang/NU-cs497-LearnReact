@@ -83,7 +83,7 @@ const SizeSelector = ({sku, sizestate}) => {
     );
   }
 
-const ProductCard = ({product, cartState, openState, inventoryState}) => {
+const ProductCard = ({product, cartState, openState, inventoryState, user}) => {
   const useSelection = () => {
     const [selected, setSelected] = useState([]);
     const toggle = (x) => {
@@ -155,7 +155,7 @@ const ProductCard = ({product, cartState, openState, inventoryState}) => {
               : <Typography variant="h4" align="center"> out of stock </Typography>}
           </CardActions>
           <CardActions>
-            <Fab variant="extended" color="primary" align="center" onClick={()=>{add2cart();}} disabled={!hasstock(product.sku)}>
+            <Fab variant="extended" color="primary" align="center" onClick={()=>{add2cart();}} disabled={(user===null)||(!hasstock(product.sku))}>
               Add to Cart
             </Fab>
           </CardActions>
@@ -164,7 +164,7 @@ const ProductCard = ({product, cartState, openState, inventoryState}) => {
 }
 
 
-export const ProductTable = ({products, cartState, openState, inventoryState}) =>{
+export const ProductTable = ({products, cartState, openState, inventoryState, user}) =>{
     const classes = GridCardStyles()
     
     return(
@@ -172,7 +172,7 @@ export const ProductTable = ({products, cartState, openState, inventoryState}) =
         <Grid container={true} spacing={4} className={classes.grid} direction="row" alignItems="center">       
         {products.map(product =>
           (<Grid item >
-            <ProductCard product={product} cartState={cartState} openState={openState} inventoryState={inventoryState}/>
+            <ProductCard product={product} cartState={cartState} openState={openState} inventoryState={inventoryState} user={user}/>
         </Grid>))}
        </Grid>
        </div>

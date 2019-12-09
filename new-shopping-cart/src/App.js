@@ -1,5 +1,5 @@
 import 'rbx/index.css';
-import {Title} from 'rbx';
+import {Title, Message} from 'rbx';
 import React, { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { Container, AppBar } from '@material-ui/core';
@@ -21,6 +21,9 @@ import TableFooter from '@material-ui/core/TableFooter';
 import Table from '@material-ui/core/Table';
 import { Layout } from 'antd';
 
+import firebase from 'firebase/app';
+import 'firebase/auth';
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 
 import {ProductTable} from './ProductTable';
 import {CartList} from './CartList';
@@ -194,6 +197,32 @@ const useDictSelection = () =>
   };
   return [selected, toggleadd, toggledelete];
 };
+const uiConfig = {
+  signInFlow: 'popup',
+  signInOptions: [
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID
+  ],
+  callbacks: {
+    signInSuccessWithAuthResult: () => false
+  }
+};
+const Welcome = ({ user }) => (
+  <Message color="info">
+    <Message.Header>
+      Welcome, {user.displayName}
+      <Button primary onClick={() => firebase.auth().signOut()}>
+        Log out
+      </Button>
+    </Message.Header>
+  </Message>
+);
+
+const SignIn = () => (
+  <StyledFirebaseAuth
+    uiConfig={uiConfig}
+    firebaseAuth={firebase.auth()}
+  />
+);
 
 
 const App = (props) => {
@@ -202,7 +231,8 @@ const App = (props) => {
   const [inventory, setinventory] = useState({});
   const products = Object.values(data);
   const [open, setOpen] = React.useState(false);
-  
+  const [user, setUser] = useState(null);
+  console.log(user)
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -235,6 +265,11 @@ const App = (props) => {
     return result
   }, {})
 
+  
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(setUser);
+  }, []);
+
   const [cartDict, cartTogglesadd, cartTogglesdelete] = useDictSelection();
   const total_price = Object.keys(cartDict).reduce((result, product)=>{
     const tmp = product.split("_")
@@ -243,24 +278,15 @@ const App = (props) => {
   return (
     <div className={classes.root}>
     <React.Fragment>
+    
       <HideOnScroll {...props}>
+        
         <AppBar className = {classes.appBar} position="fixed">
           <Toolbar>
+          { user ? <Welcome user={ user } /> : <SignIn /> }
           <Typography variant="h4" align="center" className={classes.title}>Panyang's shopping cart</Typography>      
             <Button color="inherit" onClick={handleDrawerOpen}>Cart</Button>
           </Toolbar>
-            {/* <Typography variant="h3" align="center">Panyang's shopping cart</Typography>
-            <Toolbar>
-            <IconButton
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            edge="start"
-            // className={clsx(classes.menuButton, open && classes.hide)}>
-              className={classes.menuButton}>
-            <MenuIcon />
-            </IconButton>
-            </Toolbar> */}
         </AppBar>
       </HideOnScroll>
       <Drawer
@@ -278,7 +304,7 @@ const App = (props) => {
             <ChevronRightIcon/>
           </IconButton>
           </div>
-          <CartList cartState={{cartDict, cartTogglesadd, cartTogglesdelete}} productsPrice = {productsPrice} inventoryState = {{inventory, setinventory}}/>
+          <CartList cartState={{cartDict, cartTogglesadd, cartTogglesdelete}} productsPrice = {productsPrice} inventoryState = {{inventory, setinventory}} user={user}/>
           {/* <Drawer anchor="bottom" open="true">
             <div>totol price: {total_price}</div>
           </Drawer> */}
@@ -290,7 +316,7 @@ const App = (props) => {
       </Drawer>
 
       <Container> 
-        <ProductTable products = {products} cartState={{cartDict, cartTogglesadd, cartTogglesdelete}} openState={{open, setOpen}} inventoryState = {{inventory, setinventory}}/>
+        <ProductTable products = {products} cartState={{cartDict, cartTogglesadd, cartTogglesdelete}} openState={{open, setOpen}} inventoryState = {{inventory, setinventory}} user={user}/>
       </Container>
     </React.Fragment>
     </div>
